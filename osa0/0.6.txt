@@ -1,0 +1,4 @@
+﻿selain->palvelin: HTTP POST https://fullstack-exampleapp.herokuapp.com/new_note_spa
+note over selain:
+selain lisää muistiinpanon näyttämälleen sivulle itse
+end note
