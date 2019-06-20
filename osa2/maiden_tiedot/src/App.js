@@ -35,7 +35,7 @@ function App() {
     .then(response => setCountries(response.data))
   }, [])
 
-  const Result = () => {
+  const result = () => {
     const list=countries.filter(c => c.name.toLowerCase().includes(filter.toLowerCase()))
     if (list.length > 10) {
       return <div>Too many matches, specify another filter {list.length}</div>
@@ -76,10 +76,7 @@ function App() {
         value={filter}
         onChange={filterHandler}
       />
-    <Result 
-      countries={countries}
-      filter={filter}
-    />
+    {result()}
     </div>
   );
 }

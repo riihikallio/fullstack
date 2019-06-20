@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import axios from 'axios'
+import personService from './services/persons'
 
 const Filter = ({filter, handler}) => (
   <p>Filter shown with <input 
@@ -38,24 +38,41 @@ const App = () => {
   const [ newNumber, setNewNumber ] = useState('')
   const [ filter, setFilter ] = useState('')
 
-  useEffect(() => {axios
-    .get('http://localhost:3001/persons') 
-    .then(response => setPersons(response.data))
+  useEffect(() => {
+    personService
+      .getAll()
+        .then(initial => setPersons(initial))
   }, [])
 
   const addPerson = (event) => {
     event.preventDefault()
-    let existing = persons.some(p => p.name.toLowerCase() === newName.toLowerCase() )
+    const existing = persons.find(p => p.name.toLowerCase() === newName.toLowerCase() )
     if (!existing) {
       const person = {
         name: newName,
         number: newNumber
       }
       setPersons(persons.concat(person))
-      setNewName('')
-      setNewNumber('')
+      personService
+        .create(person)
+        .then(returned => {
+          setPersons(persons.concat(returned))
+          setNewName('')
+          setNewNumber('')
+        })
     } else {
-      alert(`${newName} is already added to phonebook`)
+      if(window.confirm(`${newName} is already added to phonebook, replace the old phone number with the new one?`)) {
+        const replacing = {...existing, number: newNumber}
+        personService
+          .update(replacing)
+          .then(returned => {
+            const newList = persons.filter(p => p.id !== existing.id)
+            newList.push(replacing)
+            setPersons(newList)
+            setNewName('')
+            setNewNumber('')
+          })
+      }
     }
   }
 
@@ -71,9 +88,18 @@ const App = () => {
     setNewNumber(event.target.value)
   }
 
+  const handleDelete = (person) => {
+    if (window.confirm(`Delete ${person.name}`)) {
+      personService
+        .remove(person.id)
+        .then(whatever => setPersons(persons.filter(p => p.id !== person.id))
+          )
+    }
+  }
+
   const rows = () =>  persons
     .filter(p => p.name.toLowerCase().includes(filter.toLowerCase()))
-    .map(p => <div key={p.name}>{p.name} {p.number}</div>)
+    .map(p => <div key={p.name}>{p.name} {p.number} <button onClick={() => handleDelete(p)}>Delete</button></div>)
 
   return (
     <div>
@@ -97,7 +123,6 @@ const App = () => {
       />
     </div>
   )
-
 }
 
 export default App
