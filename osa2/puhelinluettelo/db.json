@@ -16,14 +16,9 @@
       "id": 3
     },
     {
-      "name": "Mary Poppendieck",
-      "number": "39-23-6423122",
-      "id": 4
-    },
-    {
-      "name": "Bruce Wayne",
-      "number": "432 312",
-      "id": 7
+      "name": "Clark Kent",
+      "number": "6543 655",
+      "id": 8
     }
   ]
 }
