@@ -63,7 +63,6 @@ const App = () => {
     personService
       .getAll()
         .then(initial => setPersons(initial))
-        .catch(setError('Retrieving list...'))
   }, [])
 
   const addPerson = (event) => {
@@ -83,7 +82,7 @@ const App = () => {
           setNewNumber('')
           setError(`'${person.name}' added`)
         })
-        .catch(setError(`Error adding '${person.name}'`))
+        .catch(setError(error.response.data))
     } else {
       if(window.confirm(`${newName} is already added to phonebook, replace the old phone number with the new one?`)) {
         const replacing = {...existing, number: newNumber}
@@ -97,7 +96,7 @@ const App = () => {
             setNewNumber('')
             setError(`'${replacing.name}' edited`)
           })
-          .catch(setError(`Error adding '${replacing.name}'`))
+          .catch(setError(error.response.data))
       }
     }
   }
@@ -122,7 +121,7 @@ const App = () => {
           setPersons(persons.filter(p => p.id !== person.id))
           setError(`'${person.name}' was deleted`)
         })
-        .catch(setError(`Error deleting '${person.name}'`))
+        .catch(setError(error.response.data))
     }
   }
 
