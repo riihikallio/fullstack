@@ -73,7 +73,6 @@ const App = () => {
         name: newName,
         number: newNumber
       }
-      setPersons(persons.concat(person))
       personService
         .create(person)
         .then(returned => {
@@ -82,7 +81,7 @@ const App = () => {
           setNewNumber('')
           setError(`'${person.name}' added`)
         })
-        .catch(setError(error.response.data))
+        .catch(error => setError(error.response.data.error))
     } else {
       if(window.confirm(`${newName} is already added to phonebook, replace the old phone number with the new one?`)) {
         const replacing = {...existing, number: newNumber}
@@ -96,7 +95,7 @@ const App = () => {
             setNewNumber('')
             setError(`'${replacing.name}' edited`)
           })
-          .catch(setError(error.response.data))
+          .catch(error => setError(error.response.data.error))
       }
     }
   }
@@ -121,7 +120,7 @@ const App = () => {
           setPersons(persons.filter(p => p.id !== person.id))
           setError(`'${person.name}' was deleted`)
         })
-        .catch(setError(error.response.data))
+        .catch(error => setError(error.response.data.error))
     }
   }
 
