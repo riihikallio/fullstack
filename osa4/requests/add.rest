@@ -1,0 +1,9 @@
+POST http://localhost:3003/api/blogs
+Content-Type: application/json
+
+{
+    "title": "Iltis",
+    "author": "Sanorma",
+    "url": "https://is.fi",
+    "likes": 0
+}
