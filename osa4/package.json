@@ -6,19 +6,24 @@
   "scripts": {
     "start": "node index.js",
     "watch": "nodemon index.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest --verbose",
     "lint": "eslint ."
   },
   "author": "Petri Riihikallio",
   "license": "MIT",
   "devDependencies": {
     "eslint": "^6.0.0",
+    "jest": "^24.8.0",
     "nodemon": "^1.19.1"
   },
   "dependencies": {
     "cors": "^2.8.5",
     "dotenv": "^8.0.0",
     "express": "^4.17.1",
+    "lodash": "^4.17.11",
     "mongoose": "^5.6.1"
+  },
+  "jest": {
+    "testEnvironment": "node"
   }
 }
