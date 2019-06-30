@@ -11,6 +11,12 @@ blogRouter.get('/', (request, response) => {
   
 blogRouter.post('/', (request, response) => {
   const blog = new Blog(request.body)
+  if (!blog.title || !blog.author) {
+    return response.status(400).json({ 
+      error: 'title or url missing' 
+    })
+  }
+  blog.likes = blog.likes || 0
   blog
     .save()
     .then(result => {
