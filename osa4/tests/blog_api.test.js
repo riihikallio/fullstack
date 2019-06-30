@@ -68,8 +68,9 @@ test('API adding a blog without likes works', async () => {
   expect(readBlog.likes).toBe(0)
 })
 
-test('API adding a blog without url of title fails', async () => {
+test('API adding a blog without url or title fails', async () => {
   const badBlog = {
+    title: 'Hessun seikkailut',
     author: 'Hessu Hopo',
     likes: 666
   }
