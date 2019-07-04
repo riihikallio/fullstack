@@ -8,7 +8,11 @@ const cors = require('cors')
 const mongoose = require('mongoose')
 const middleware = require('./utils/middleware')
 
-mongoose.connect(config.MONGODB_URI, { useNewUrlParser: true, useFindAndModify: false })
+mongoose.connect(config.MONGODB_URI, { 
+  useNewUrlParser: true, 
+  useFindAndModify: false,
+  useCreateIndex: true
+})
   .then(() => {
     console.log('connected to MongoDB')
   })
