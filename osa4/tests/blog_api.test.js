@@ -81,6 +81,52 @@ test('API adding a blog without url or title fails', async () => {
     .expect(400)
 })
 
+describe('API deletion of a blog', () => {
+  test('succeeds with status code 204 if id is valid', async () => {
+    const beforelist = await api
+      .get('/api/blogs')
+      .expect(200)
+
+    await api
+      .delete(`/api/blogs/${beforelist.body[0].id}`)
+      .expect(204)
+
+    const afterlist = await api
+      .get('/api/blogs')
+      .expect(200)
+
+    expect(afterlist.body.length).toBe(
+      beforelist.body.length - 1
+    )
+
+    const contents = afterlist.body.map(r => r.title)
+    expect(contents).not.toContain(beforelist.body[0].title)
+  })
+})
+
+describe('API updating a blog', () => {
+  test('Try to change likes to 666', async () => {
+    const beforelist = await api
+      .get('/api/blogs')
+      .expect(200)
+    
+    const edited = beforelist.body[0]
+    edited.likes = 666
+  
+    await api
+      .put(`/api/blogs/${edited.id}`)
+      .send(edited)
+      .expect(200)
+  
+    const afterlist = await api
+      .get('/api/blogs')
+      .expect(200)
+  
+    const contents = afterlist.body.map(r => r.likes)
+    expect(contents).toContain(666)
+  })
+})
+
 afterAll(() => {
   mongoose.connection.close()
 })
