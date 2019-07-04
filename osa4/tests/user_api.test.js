@@ -39,6 +39,34 @@ describe('when there is initially one user at db', () => {
     expect(usernames).toContain(newUser.username)
   })
 
+  test('USER creation fails with an existing username', async () => {
+    const usersAtStart = await usersInDb()
+
+    const newUser = {
+      username: 'root',
+      password: 'salainen',
+    }
+
+    await api
+      .post('/api/users')
+      .send(newUser)
+      .expect(400)
+  })
+
+  test('USER creation fails with a short username', async () => {
+    const usersAtStart = await usersInDb()
+
+    const newUser = {
+      username: 'rt',
+      password: 'salainen',
+    }
+
+    await api
+      .post('/api/users')
+      .send(newUser)
+      .expect(400)
+  })
+
   afterAll(() => {
     mongoose.connection.close()
   })
