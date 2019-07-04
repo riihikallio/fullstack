@@ -8,7 +8,7 @@ blogRouter.get('/', (request, response) => {
       response.json(blogs)
     })
 })
-  
+
 blogRouter.post('/', (request, response) => {
   const blog = new Blog(request.body)
   if (blog.title && blog.url) {
@@ -21,8 +21,30 @@ blogRouter.post('/', (request, response) => {
   } else return response.status(400).json({ 
     error: 'title or url missing' 
   })
-}
+})
 
-)
+blogRouter.delete('/:id', async (req, res, next) => {
+  try {
+    await Blog.findByIdAndRemove(req.params.id)
+    res.status(204).end()
+  } catch (e) {
+    next(e)
+  }
+})
+
+blogRouter.put('/:id', async (req, res, next) => {
+  const blog = {
+    title: req.body.title,
+    author: req.body.author,
+    url: req.body.url,
+    likes: req.body.likes
+  }
+  try {
+    const result = await Blog.findByIdAndUpdate(req.params.id, blog, { new: true })
+    res.json(result.toJSON())
+  } catch (e) {
+    next(e)
+  }
+})
 
 module.exports = blogRouter
