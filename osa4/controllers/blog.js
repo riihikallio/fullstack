@@ -1,4 +1,5 @@
 const blogRouter = require('express').Router()
+const jwt = require('jsonwebtoken')
 const Blog = require('../models/blog')
 const User = require('../models/user')
 
@@ -11,28 +12,52 @@ blogRouter.get('/', (request, response) => {
     })
 })
 
-blogRouter.post('/', async (request, response) => {
+blogRouter.post('/', async (request, response, next) => {
   const blog = new Blog(request.body)
-  const user = await User.findById('5d1ca8b1a5d96d3012f75b87')
-  blog.user = user._id
-  if (blog.title && blog.url) {
-    blog.likes = blog.likes || 0
-    blog
-      .save()
-      .then(result => {
-        response.status(201).json(result)
-      })
-    user.blogs = user.blogs.concat(blog._id)
-    await user.save()
-  } else return response.status(400).json({ 
-    error: 'title or url missing' 
-  })
+
+  try {
+    if (!request.token) {
+      return response.status(401).json({ error: 'token missing' })
+    }
+    const decodedToken = jwt.verify(request.token, process.env.SECRET)
+    if (!decodedToken.id) {
+      return response.status(401).json({ error: 'token invalid' })
+    }
+    const user = await User.findById(decodedToken.id)
+    blog.user = user._id
+    if (blog.title && blog.url) {
+      blog.likes = blog.likes || 0
+      blog
+        .save()
+        .then(result => {
+          response.status(201).json(result)
+        })
+      user.blogs = user.blogs.concat(blog._id)
+      await user.save()
+    } else return response.status(400).json({ 
+      error: 'title or url missing' 
+    })
+  } catch (e){
+    next(e)
+  }
 })
 
 blogRouter.delete('/:id', async (req, res, next) => {
   try {
-    await Blog.findByIdAndRemove(req.params.id)
-    res.status(204).end()
+    if (!req.token) {
+      return res.status(401).json({ error: 'token missing' })
+    }
+    const decodedToken = jwt.verify(req.token, process.env.SECRET)
+    if (!decodedToken.id) {
+      return res.status(401).json({ error: 'token invalid' })
+    }
+    const blog = await Blog.findById(req.params.id)
+    if (decodedToken.id.toString() === blog.user.toString()) {
+      await Blog.deleteOne(blog)
+      res.status(204).end()
+    } else {
+      return res.status(401).json({ error: 'not blog creator' })
+    }
   } catch (e) {
     next(e)
   }
