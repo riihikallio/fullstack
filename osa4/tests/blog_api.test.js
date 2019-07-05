@@ -8,8 +8,8 @@ const blogs = require('./testcontent')
 
 const api = supertest(app)
 
-let token;
-let uid;
+let token
+let uid
 
 beforeAll(async () => {
   await User.deleteMany({})

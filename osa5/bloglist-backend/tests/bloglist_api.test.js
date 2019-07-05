@@ -1,17 +1,40 @@
 const supertest = require('supertest')
 const mongoose = require('mongoose')
+const bcrypt = require('bcrypt')
 const app = require('../app')
 const { initialBlogs, blogsInDb, equalTo, usersInDb } = require('./test_helper')
 const api = supertest(app)
 const Blog = require('../models/blog')
 const User = require('../models/user')
 
+let token
+let uid
+
 describe('when there are blogs saved', () => {
+  beforeAll(async () => {
+    await User.deleteMany({})
+    const passwordHash = await bcrypt.hash('sekret', 10)
+    const user = new User({ username: 'test', passwordHash: passwordHash })
+    await user.save()
+    const newUser = await User.findOne({ username: 'test' })
+    uid = newUser._id
+
+    const response = await api
+      .post('/api/login')
+      .send({ username: 'test', password: 'sekret' })
+    token = `bearer ${response.body.token}`
+  })
   beforeEach(async () => {
     await Blog.remove({})
 
     for (let blog of initialBlogs) {
-      let blogObject = new Blog(blog)
+      let blogObject = new Blog({
+        title: blog.title,
+        author: blog.author,
+        url: blog.url,
+        likes: blog.likes,
+        user: uid
+      })
       await blogObject.save()
     }
   })
@@ -22,7 +45,7 @@ describe('when there are blogs saved', () => {
       .expect(200)
       .expect('Content-Type', /application\/json/)
 
-    expect(result.body.length).toBe(initialBlogs.length)  
+    expect(result.body.length).toBe(initialBlogs.length)
   })
 
   test('blogs have identifier field id', async () => {
@@ -34,14 +57,15 @@ describe('when there are blogs saved', () => {
   })
 
   test('a blog can be deleted', async () => {
-    const blogsAtStart = await blogsInDb() 
+    const blogsAtStart = await blogsInDb()
     const blockToDelete = blogsAtStart[0]
 
     await api
       .delete(`/api/blogs/${blockToDelete.id}`)
+      .set('Authorization', token)
       .expect(204)
 
-    const blogsAtEnd = await blogsInDb() 
+    const blogsAtEnd = await blogsInDb()
 
     const deleted = blogsAtEnd.find(equalTo(blockToDelete))
 
@@ -54,21 +78,22 @@ describe('when there are blogs saved', () => {
     const blogsAtStart = await blogsInDb()
     const blockToChange = blogsAtStart[0]
 
-    const updatedBlog = { ...blockToChange, likes: blockToChange.likes + 1} 
+    const updatedBlog = { ...blockToChange, likes: blockToChange.likes + 1 }
 
     await api
       .put(`/api/blogs/${blockToChange.id}`)
+      .set('Authorization', token)
       .send(updatedBlog)
-      .expect(200)  
+      .expect(200)
 
     const blogsAtEnd = await blogsInDb()
 
-    const changed = blogsAtEnd.find(equalTo(blockToChange))    
+    const changed = blogsAtEnd.find(equalTo(blockToChange))
     expect(changed.likes).toBe(blockToChange.likes + 1)
   })
 
   describe('adding a new blog', () => {
-    it ('increases the blog count', async () => {
+    it('increases the blog count', async () => {
       const newBlog = {
         author: 'Martin Fowler',
         title: 'Microservices Resource Guide',
@@ -78,11 +103,12 @@ describe('when there are blogs saved', () => {
 
       await api
         .post('/api/blogs')
+        .set('Authorization', token)
         .send(newBlog)
         .expect(201)
         .expect('Content-Type', /application\/json/)
 
-      const blogsAtEnd = await blogsInDb()  
+      const blogsAtEnd = await blogsInDb()
 
       expect(blogsAtEnd.length).toBe(initialBlogs.length + 1)
 
@@ -100,12 +126,13 @@ describe('when there are blogs saved', () => {
 
       await api
         .post('/api/blogs')
+        .set('Authorization', token)
         .send(newBlog)
         .expect(201)
 
-      const blogsAtEnd = await blogsInDb()  
+      const blogsAtEnd = await blogsInDb()
       const created = blogsAtEnd.find(equalTo(newBlog))
-      expect(created.likes).toBe(0)        
+      expect(created.likes).toBe(0)
     })
 
     it('blog is not added without url', async () => {
@@ -117,24 +144,7 @@ describe('when there are blogs saved', () => {
 
       await api
         .post('/api/blogs')
-        .send(newBlog)
-        .expect(400)
-        .expect('Content-Type', /application\/json/)  
-
-      const blogsAtEnd = await blogsInDb()
-
-      expect(blogsAtEnd.length).toBe(initialBlogs.length)   
-    })
-
-    it('blog is not added without title', async () => {
-      const newBlog = {
-        author: 'Martin Fowler',
-        url: 'https://martinfowler.com/microservices/'  ,      
-        likes: 3,
-      }
-
-      await api
-        .post('/api/blogs')
+        .set('Authorization', token)
         .send(newBlog)
         .expect(400)
         .expect('Content-Type', /application\/json/)
@@ -142,7 +152,26 @@ describe('when there are blogs saved', () => {
       const blogsAtEnd = await blogsInDb()
 
       expect(blogsAtEnd.length).toBe(initialBlogs.length)
-    })    
+    })
+
+    it('blog is not added without title', async () => {
+      const newBlog = {
+        author: 'Martin Fowler',
+        url: 'https://martinfowler.com/microservices/',
+        likes: 3,
+      }
+
+      await api
+        .post('/api/blogs')
+        .set('Authorization', token)
+        .send(newBlog)
+        .expect(400)
+        .expect('Content-Type', /application\/json/)
+
+      const blogsAtEnd = await blogsInDb()
+
+      expect(blogsAtEnd.length).toBe(initialBlogs.length)
+    })
   })
 })
 
@@ -202,7 +231,7 @@ describe('when there is initially one user at db', async () => {
 
     const newUser = {
       username: 'hellas',
-      name: 'Arto Hellas', 
+      name: 'Arto Hellas',
       password: 'sa',
     }
 
@@ -216,7 +245,7 @@ describe('when there is initially one user at db', async () => {
 
     const usersAtEnd = await usersInDb()
     expect(usersAtEnd.length).toBe(usersAtStart.length)
-  })  
+  })
 
   test('creation fails with too short username', async () => {
     const usersAtStart = await usersInDb()
@@ -237,7 +266,7 @@ describe('when there is initially one user at db', async () => {
 
     const usersAtEnd = await usersInDb()
     expect(usersAtEnd.length).toBe(usersAtStart.length)
-  })    
+  })
 })
 
 afterAll(() => {
