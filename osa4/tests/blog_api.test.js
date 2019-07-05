@@ -1,16 +1,40 @@
 const mongoose = require('mongoose')
 const supertest = require('supertest')
+const bcrypt = require('bcrypt')
 const app = require('../app')
 const Blog = require('../models/blog')
+const User = require('../models/user')
 const blogs = require('./testcontent')
 
 const api = supertest(app)
 
+let token;
+let uid;
+
+beforeAll(async () => {
+  await User.deleteMany({})
+  const passwordHash = await bcrypt.hash('sekret', 10)
+  const user = new User({ username: 'test', passwordHash: passwordHash })
+  await user.save()
+  const newUser = await User.findOne({ username: 'test'})
+  uid = newUser._id
+
+  const response = await api
+    .post('/api/login')
+    .send({ username: 'test', password: 'sekret' })
+  token = `bearer ${response.body.token}`
+})
+
 beforeEach(async () => {
   await Blog.remove({})
-  
   const blogObjects = blogs
-    .map(blog => new Blog(blog))
+    .map(blog => new Blog({
+      title: blog.title,
+      author: blog.author,
+      url: blog.url,
+      likes: blog.likes,
+      user: uid
+    }))
   const promiseArray = blogObjects.map(blog => blog.save())
   await Promise.all(promiseArray)
 })
@@ -40,6 +64,7 @@ test('API adding a blog with POST works', async () => {
       
   await api
     .post('/api/blogs')
+    .set('Authorization', token)
     .send(newBlog)
     .expect(201)
 
@@ -60,6 +85,7 @@ test('API adding a blog without likes works', async () => {
         
   await api
     .post('/api/blogs')
+    .set('Authorization', token)
     .send(newBlog)
     .expect(201)
   
@@ -77,6 +103,7 @@ test('API adding a blog without url or title fails', async () => {
         
   await api
     .post('/api/blogs')
+    .set('Authorization', token)
     .send(badBlog)
     .expect(400)
 })
@@ -89,6 +116,7 @@ describe('API deletion of a blog', () => {
 
     await api
       .delete(`/api/blogs/${beforelist.body[0].id}`)
+      .set('Authorization', token)
       .expect(204)
 
     const afterlist = await api
@@ -115,6 +143,7 @@ describe('API updating a blog', () => {
   
     await api
       .put(`/api/blogs/${edited.id}`)
+      .set('Authorization', token)
       .send(edited)
       .expect(200)
   
