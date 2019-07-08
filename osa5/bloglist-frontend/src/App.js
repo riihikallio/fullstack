@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Blog from'./components/Blog'
+import LoginForm from './components/LoginForm'
+import BlogForm from './components/BlogForm'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import './App.css'
@@ -86,71 +88,32 @@ function App() {
     } catch (exception) {
       setError('wrong credentials')
     }
-
   }
-
-  const loginForm = () => (
-    <form onSubmit={handleLogin}>
-      <h2>Login</h2>
-      <div>
-        username
-          <input
-          type="text"
-          value={username}
-          name="Username"
-          onChange={({ target }) => setUsername(target.value)}
-        />
-      </div>
-      <div>
-        password
-          <input
-          type="password"
-          value={password}
-          name="Password"
-          onChange={({ target }) => setPassword(target.value)}
-        />
-      </div>
-      <button type="submit">login</button>
-    </form>      
-  )
-
-  const blogForm = () => (
-    <form onSubmit={addBlog}>
-    <h2>Add a blog</h2>
-      Title:
-      <input
-        type="text"
-        value={newTitle}
-        name="Title"
-        onChange={({target}) => setNewTitle(target.value)}
-      /><br />
-      Author:
-        <input
-        type="text"
-        value={newAuthor}
-        name="Author"
-        onChange={({target}) => setNewAuthor(target.value)}
-      /><br />
-      URL:
-        <input
-        type="text"
-        value={newUrl}
-        name="Url"
-        onChange={({target}) => setNewUrl(target.value)}
-      /><br />
-      <button type="submit">save</button>
-    </form>  
-  )
 
   return (
     <div className="App">
     <h1>Blogs</h1>
     <Notification message={errorMessage} />
     {user === null ?
-      loginForm() :
+      <LoginForm 
+        handleSubmit={handleLogin}
+        handleUsernameChange={({ target }) => setUsername(target.value)}
+        handlePasswordChange={({ target }) => setPassword(target.value)}
+        username={username}
+        password={password}
+      />
+      :
       <div>
         <p>{user.name} logged in <button onClick={() => logout()}>logout</button></p>
-        {blogForm()}
+        <BlogForm 
+          submit={addBlog}
+          title={newTitle}
+          titleChange={({ target }) => setNewTitle(target.value)}
+          author={newAuthor}
+          authorChange={({ target }) => setNewAuthor(target.value)}
+          url={newUrl}
+          urlChange={({ target }) => setNewUrl(target.value)}
+        />
         <h2>List of blogs</h2>
         {blogList.map(b => <Blog blog={b} key={b.url} />)}
       </div>
