@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react'
 import Blog from'./components/Blog'
 import LoginForm from './components/LoginForm'
 import BlogForm from './components/BlogForm'
@@ -7,11 +7,11 @@ import loginService from './services/login'
 import './App.css'
 
 function App() {
-  const [blogList, setBlogList] = useState([]) 
+  const [blogList, setBlogList] = useState([])
   const [addVisible, setAddVisible] = useState(false)
-  const [errorMessage, setErrorMessage] = useState(null) 
-  const [username, setUsername] = useState('') 
-  const [password, setPassword] = useState('') 
+  const [errorMessage, setErrorMessage] = useState(null)
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
   const [newTitle, setNewTitle] = useState('')
   const [newAuthor, setNewAuthor] = useState('')
@@ -21,7 +21,7 @@ function App() {
   useEffect( () => {
     blogService
       .getAll()
-        .then(initial => setBlogList(initial))
+      .then(initial => setBlogList(initial))
   }, [])
 
   useEffect(() => {
@@ -58,7 +58,7 @@ function App() {
       })
       window.localStorage.setItem(
         'loggedUser', JSON.stringify(user)
-      ) 
+      )
       blogService.setToken(user.token)
       setUser(user)
       setUsername('')
@@ -96,24 +96,24 @@ function App() {
   const showWhenVisible = { display: addVisible ? '' : 'none' }
   return (
     <div className="App">
-    <h1>Blogs</h1>
-    <Notification message={errorMessage} />
-    {user === null ?
-      <LoginForm 
-        handleSubmit={handleLogin}
-        handleUsernameChange={({ target }) => setUsername(target.value)}
-        handlePasswordChange={({ target }) => setPassword(target.value)}
-        username={username}
-        password={password}
-      />
-      :
+      <h1>Blogs</h1>
+      <Notification message={errorMessage} />
+      {user === null ?
+        <LoginForm
+          handleSubmit={handleLogin}
+          handleUsernameChange={({ target }) => setUsername(target.value)}
+          handlePasswordChange={({ target }) => setPassword(target.value)}
+          username={username}
+          password={password}
+        />
+        :
       <>
         <p>{user.name} logged in <button onClick={() => logout()}>logout</button></p>
         <div style={hideWhenVisible}>
           <button onClick={() => setAddVisible(true)}>Add new</button>
         </div>
         <div  style={showWhenVisible}>
-          <BlogForm 
+          <BlogForm
             submit={addBlog}
             title={newTitle}
             titleChange={({ target }) => setNewTitle(target.value)}
@@ -127,19 +127,18 @@ function App() {
         <h2>List of blogs</h2>
         {blogList
           .sort((a,b) => b.likes - a.likes)
-          .map(b => <Blog 
-            blog={b} 
-            key={b.id} 
-            open={open} 
-            setOpen={setOpen} 
-            list={blogList}
+          .map(b => <Blog
+            blog={b}
+            key={b.id}
+            open={open}
+            setOpen={setOpen}
             setList={setBlogList}
             user={user}
-        />)}
+          />)}
       </>
-    }
+      }
     </div>
   )
 }
 
-export default App;
+export default App

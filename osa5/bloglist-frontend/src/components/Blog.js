@@ -1,7 +1,7 @@
 import React from 'react'
 import blogService from '../services/blogs'
 
-const Blog = ({ blog, open, setOpen, list, setList, user }) => {
+const Blog = ({ blog, open, setOpen, setList, user }) => {
 
   const refresh = async () => {
     const newList = await blogService.getAll()
@@ -20,7 +20,7 @@ const Blog = ({ blog, open, setOpen, list, setList, user }) => {
     refresh()
   }
 
-  const deleteBlog = async () =>{
+  const deleteBlog = async () => {
     if (window.confirm(`Remove ${blog.title} (by ${blog.author})?`)) {
       await blogService.remove(blog.id)
       refresh()
@@ -31,7 +31,7 @@ const Blog = ({ blog, open, setOpen, list, setList, user }) => {
   if (blog.user.username === user.username) {
     del = <button onClick={() => deleteBlog()}>Delete</button>
   }
-  
+
   let details = ''
   if (blog.id === open) {
     details = <>
