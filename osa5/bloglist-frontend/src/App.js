@@ -8,6 +8,7 @@ import './App.css'
 
 function App() {
   const [blogList, setBlogList] = useState([]) 
+  const [addVisible, setAddVisible] = useState(false)
   const [errorMessage, setErrorMessage] = useState(null) 
   const [username, setUsername] = useState('') 
   const [password, setPassword] = useState('') 
@@ -90,6 +91,8 @@ function App() {
     }
   }
 
+  const hideWhenVisible = { display: addVisible ? 'none' : '' }
+  const showWhenVisible = { display: addVisible ? '' : 'none' }
   return (
     <div className="App">
     <h1>Blogs</h1>
@@ -103,20 +106,26 @@ function App() {
         password={password}
       />
       :
-      <div>
+      <>
         <p>{user.name} logged in <button onClick={() => logout()}>logout</button></p>
-        <BlogForm 
-          submit={addBlog}
-          title={newTitle}
-          titleChange={({ target }) => setNewTitle(target.value)}
-          author={newAuthor}
-          authorChange={({ target }) => setNewAuthor(target.value)}
-          url={newUrl}
-          urlChange={({ target }) => setNewUrl(target.value)}
-        />
+        <div style={hideWhenVisible}>
+          <button onClick={() => setAddVisible(true)}>Add new</button>
+        </div>
+        <div  style={showWhenVisible}>
+          <BlogForm 
+            submit={addBlog}
+            title={newTitle}
+            titleChange={({ target }) => setNewTitle(target.value)}
+            author={newAuthor}
+            authorChange={({ target }) => setNewAuthor(target.value)}
+            url={newUrl}
+            urlChange={({ target }) => setNewUrl(target.value)}
+          />
+          <button onClick={() => setAddVisible(false)}>Cancel</button>
+        </div>
         <h2>List of blogs</h2>
         {blogList.map(b => <Blog blog={b} key={b.url} />)}
-      </div>
+      </>
     }
     </div>
   )
