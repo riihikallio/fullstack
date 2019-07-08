@@ -21,8 +21,10 @@ const Blog = ({ blog, open, setOpen, list, setList, user }) => {
   }
 
   const deleteBlog = async () =>{
-    await blogService.remove(blog.id)
-    refresh()
+    if (window.confirm(`Remove ${blog.title} (by ${blog.author})?`)) {
+      await blogService.remove(blog.id)
+      refresh()
+    }
   }
 
   let del = ''
