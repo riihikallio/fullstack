@@ -16,6 +16,7 @@ function App() {
   const [newTitle, setNewTitle] = useState('')
   const [newAuthor, setNewAuthor] = useState('')
   const [newUrl, setNewUrl] = useState('')
+  const [open, setOpen] = useState('')
 
   useEffect( () => {
     blogService
@@ -124,7 +125,7 @@ function App() {
           <button onClick={() => setAddVisible(false)}>Cancel</button>
         </div>
         <h2>List of blogs</h2>
-        {blogList.map(b => <Blog blog={b} key={b.url} />)}
+        {blogList.map(b => <Blog blog={b} key={b.id} open={open} setOpen={setOpen} />)}
       </>
     }
     </div>
