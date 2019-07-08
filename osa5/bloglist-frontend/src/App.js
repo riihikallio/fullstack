@@ -134,6 +134,7 @@ function App() {
             setOpen={setOpen} 
             list={blogList}
             setList={setBlogList}
+            user={user}
         />)}
       </>
     }
