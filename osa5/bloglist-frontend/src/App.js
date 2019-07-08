@@ -125,7 +125,16 @@ function App() {
           <button onClick={() => setAddVisible(false)}>Cancel</button>
         </div>
         <h2>List of blogs</h2>
-        {blogList.map(b => <Blog blog={b} key={b.id} open={open} setOpen={setOpen} />)}
+        {blogList
+          .sort((a,b) => b.likes - a.likes)
+          .map(b => <Blog 
+            blog={b} 
+            key={b.id} 
+            open={open} 
+            setOpen={setOpen} 
+            list={blogList}
+            setList={setBlogList}
+        />)}
       </>
     }
     </div>
