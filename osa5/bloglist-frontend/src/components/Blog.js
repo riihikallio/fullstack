@@ -44,7 +44,10 @@ const Blog = ({ blog, open, setOpen, setList, user }) => {
 
   return (
     <div className="blog" >
-      <div onClick={() => {(blog.id !== open) ? setOpen(blog.id) : setOpen('') }}>
+      <div
+        data-testid={blog.id}
+        onClick={() => {(blog.id !== open) ? setOpen(blog.id) : setOpen('') }}
+      >
         {blog.title} (by {blog.author})
       </div>
       {details}
