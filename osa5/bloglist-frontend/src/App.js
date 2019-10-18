@@ -4,14 +4,17 @@ import LoginForm from './components/LoginForm'
 import BlogForm from './components/BlogForm'
 import blogService from './services/blogs'
 import loginService from './services/login'
+import { useField } from './hooks'
 import './App.css'
 
 function App() {
   const [blogList, setBlogList] = useState([])
   const [addVisible, setAddVisible] = useState(false)
   const [errorMessage, setErrorMessage] = useState(null)
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
+  //const [username, setUsername] = useState('')
+  const username = useField('text')
+  //const [password, setPassword] = useState('')
+  const password = useField('text')
   const [user, setUser] = useState(null)
   const [newTitle, setNewTitle] = useState('')
   const [newAuthor, setNewAuthor] = useState('')
@@ -53,18 +56,25 @@ function App() {
   const handleLogin = async (event) => {
     event.preventDefault()
     try {
+      console.log(username.value + ' '+ password.value)
       const user = await loginService.login({
-        username, password
+        username: username.value, password: password.value
       })
       window.localStorage.setItem(
         'loggedUser', JSON.stringify(user)
       )
       blogService.setToken(user.token)
       setUser(user)
-      setUsername('')
-      setPassword('')
+      //setUsername('')
+      username.reset()
+      //setPassword('')
+      password.reset()
     } catch (exception) {
-      setError('wrong credentials')
+      if (exception.message.slice(-3) === '401') {
+        setError('Wrong credentials')
+      } else {
+        setError(exception.message)
+      }
     }
   }
 
@@ -88,7 +98,7 @@ function App() {
       setNewUrl('')
       setError(`Added blog ${created.title} by ${created.author}`)
     } catch (exception) {
-      setError('wrong credentials')
+      setError(exception.errorMessage)
     }
   }
 
@@ -101,8 +111,8 @@ function App() {
       {user === null ?
         <LoginForm
           handleSubmit={handleLogin}
-          handleUsernameChange={({ target }) => setUsername(target.value)}
-          handlePasswordChange={({ target }) => setPassword(target.value)}
+          // handleUsernameChange={({ target }) => setUsername(target.value)}
+          // handlePasswordChange={({ target }) => setPassword(target.value)}
           username={username}
           password={password}
         />
