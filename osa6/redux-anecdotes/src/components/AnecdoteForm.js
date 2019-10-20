@@ -4,7 +4,7 @@ import { newAnecdote } from '../reducers/anecdoteReducer'
 const AnecdoteForm = (props) => (
     <div>
         <h2>create new</h2>
-        <form onSubmit={(event) => { props.store.dispatch(newAnecdote(event.target.quote.value)) }}>
+        <form onSubmit={(event) => { event.preventDefault(); props.store.dispatch(newAnecdote(event.target.quote.value)) }}>
             <div><input name="quote" /></div>
             <button>create</button>
         </form>
