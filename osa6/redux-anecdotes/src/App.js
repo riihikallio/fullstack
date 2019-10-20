@@ -6,9 +6,9 @@ import Filter from './components/Filter';
 
 const App = (props) => (
   <div>
+    <Notification store={props.store} />
     <h2>Anecdotes</h2>
     <Filter store={props.store} />
-    <Notification store={props.store} />
     <AnecdoteList store={props.store} />
     <AnecdoteForm store={props.store} />
   </div>
