@@ -11,9 +11,7 @@ function App() {
   const [blogList, setBlogList] = useState([])
   const [addVisible, setAddVisible] = useState(false)
   const [errorMessage, setErrorMessage] = useState(null)
-  //const [username, setUsername] = useState('')
   const username = useField('text')
-  //const [password, setPassword] = useState('')
   const password = useField('text')
   const [user, setUser] = useState(null)
   const [newTitle, setNewTitle] = useState('')
@@ -65,9 +63,7 @@ function App() {
       )
       blogService.setToken(user.token)
       setUser(user)
-      //setUsername('')
       username.reset()
-      //setPassword('')
       password.reset()
     } catch (exception) {
       if (exception.message.slice(-3) === '401') {
@@ -111,8 +107,6 @@ function App() {
       {user === null ?
         <LoginForm
           handleSubmit={handleLogin}
-          // handleUsernameChange={({ target }) => setUsername(target.value)}
-          // handlePasswordChange={({ target }) => setPassword(target.value)}
           username={username}
           password={password}
         />
