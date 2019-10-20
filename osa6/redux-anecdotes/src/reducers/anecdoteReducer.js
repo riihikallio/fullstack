@@ -22,7 +22,7 @@ export const voteFor = (id) => ({
   data: { id }
 })
 
-export const newAnecdote = (quote) => ({
+export const addAnecdote = (quote) => ({
   type: 'ADD',
   data: {
     content: quote,
@@ -31,7 +31,7 @@ export const newAnecdote = (quote) => ({
   }
 })
 
-const reducer = (state = initialState, action) => {
+const aReducer = (state = initialState, action) => {
   console.log('state: ', state)
   console.log('action', action)
   switch (action.type) {
@@ -45,4 +45,4 @@ const reducer = (state = initialState, action) => {
   }
 }
 
-export default reducer
+export default aReducer
