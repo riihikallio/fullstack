@@ -13,16 +13,9 @@ const AnecdoteList = (props) => {
         }, 5000)
     }
 
-    let filtered
-    if (!props.filter) {
-        filtered = props.anecdotes
-    } else {
-        filtered = props.anecdotes.filter(a => a.content.includes(props.filter))
-    }
-
     return (
         <div>
-            {filtered.sort((a, b) => b.votes - a.votes).map(anecdote =>
+            {props.filtered.map(anecdote =>
                 <div key={anecdote.id}>
                     <div>
                         {anecdote.content}
@@ -36,11 +29,20 @@ const AnecdoteList = (props) => {
     )
 }
 
+const filtered = ({ anecdotes, filter }) => {
+    if (!filter) {
+        return anecdotes.sort((a, b) => b.votes - a.votes)
+    } else {
+        return anecdotes.filter(a => a.content.includes(filter)).sort((a, b) => b.votes - a.votes)
+    }
+}
+
 const mapStateToProps = (state) => {
     // joskus on hyödyllistä tulostaa mapStateToProps:ista...
     console.log(state)
     return {
-        anecdotes: state.anecdotes,
+        filtered: filtered(state),
+//        anecdotes: state.anecdotes,
         filter: state.filter
     }
 }
