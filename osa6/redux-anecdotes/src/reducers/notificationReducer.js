@@ -1,6 +1,6 @@
 export const addNotification = (text) => ({
     type: 'NOTE',
-    data: text
+    data: text,
   })
 
 const nReducer = (state = '', action) => {
