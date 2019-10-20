@@ -5,13 +5,9 @@ export const voteFor = (id) => ({
   data: { id }
 })
 
-export const addAnecdote = (quote) => ({
+export const addAnecdote = (object) => ({
   type: 'ADD',
-  data: {
-    content: quote,
-    //    id: getId(),
-    votes: 0
-  }
+  data: object
 })
 
 
