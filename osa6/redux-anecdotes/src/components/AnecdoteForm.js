@@ -1,19 +1,13 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { addAnecdote } from '../reducers/anecdoteReducer'
-import { addNotification } from '../reducers/notificationReducer'
-import dbService from '../services/anecdotes'
+import { setNotification } from '../reducers/notificationReducer'
 
 const AnecdoteForm = (props) => {
     const add = async (event) => {
         event.preventDefault()
-        props.addNotification('You added "' + event.target.quote.value + '"')
-        const newA = await dbService.createNew(event.target.quote.value)
-        event.target.quote.value = ''
-        props.addAnecdote(newA)
-        setTimeout(() => {
-            props.addNotification(null)
-        }, 5000)
+        props.setNotification(`You added "${event.target.quote.value}"`, 10)
+        props.addAnecdote(event.target.quote.value)
         event.target.quote.value = ''
     }
     return (
@@ -29,7 +23,7 @@ const AnecdoteForm = (props) => {
 
 const mapDispatchToProps = {
     addAnecdote,
-    addNotification
+    setNotification
 }
 
 const ConnectedAnecdoteForm = connect(null, mapDispatchToProps)(AnecdoteForm)

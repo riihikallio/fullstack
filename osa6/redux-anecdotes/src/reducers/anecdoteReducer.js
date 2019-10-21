@@ -10,9 +10,9 @@ export const voteFor = (anecdote) => {
   }
 }
 
-export const addAnecdote = (obj) => {
+export const addAnecdote = (quote) => {
   return async dispatch => {
-    const newA = await dbService.createNew(obj.content)
+    const newA = await dbService.createNew(quote)
     dispatch({
       type: 'ADD',
       data: newA
