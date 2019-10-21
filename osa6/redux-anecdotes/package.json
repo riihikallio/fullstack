@@ -10,10 +10,11 @@
     "react-redux": "^7.1.1",
     "react-scripts": "3.0.1",
     "redux": "^4.0.1",
+    "redux-thunk": "^2.3.0",
     "typescript": "^3.6.4"
   },
   "scripts": {
-    "server": "json-server -p3001 db.json",
+    "server": "json-server -p3001 -w db.json",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",

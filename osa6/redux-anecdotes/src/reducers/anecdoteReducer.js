@@ -1,20 +1,27 @@
-const getId = () => (100000 * Math.random()).toFixed(0)
+import dbService from '../services/anecdotes'
 
 export const voteFor = (id) => ({
   type: 'VOTE',
   data: { id }
 })
 
-export const addAnecdote = (object) => ({
+export const addAnecdote = (obj) => {
+  return async dispatch => {
+    const newA = await dbService.createNew(obj.content)
+    dispatch({
   type: 'ADD',
-  data: object
+  data: newA
 })
+}}
 
-
-export const initAnecdotes = (list) => ({
-  type: 'INIT',
-  data: list
-})
+export const initAnecdotes = (list) => {
+  return async dispatch => {
+    const anecdotes = await dbService.getAll()
+    dispatch({
+      type: 'INIT',
+      data: anecdotes
+    })
+}}
 
 const aReducer = (state = [], action) => {
   console.log('state: ', state)

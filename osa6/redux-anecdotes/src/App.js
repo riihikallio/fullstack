@@ -4,13 +4,11 @@ import AnecdoteForm from './components/AnecdoteForm'
 import AnecdoteList from './components/AnecdoteList'
 import Notification from './components/Notification';
 import Filter from './components/Filter';
-import dbService from './services/anecdotes'
 import {initAnecdotes} from './reducers/anecdoteReducer'
 
 const App = (props) => {
   useEffect(() => {
-    dbService
-      .getAll().then(anecdotes => props.initAnecdotes(anecdotes))
+    props.initAnecdotes()
   }, [])
 
   return (
@@ -23,6 +21,5 @@ const App = (props) => {
     </div>
   )
 }
-
 
 export default connect(null, { initAnecdotes })(App)
