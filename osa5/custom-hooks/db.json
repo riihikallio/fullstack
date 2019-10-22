@@ -1,0 +1,64 @@
+{
+  "notes": [
+    {
+      "content": "custom-hooks are awesome!",
+      "id": 1
+    },
+    {
+      "content": "best feature ever <3",
+      "id": 2
+    },
+    {
+      "content": "Piimää",
+      "id": 3
+    },
+    {
+      "content": "Leipää",
+      "id": 4
+    },
+    {
+      "content": "Juustoa",
+      "id": 5
+    },
+    {
+      "content": "Makkaraa",
+      "id": 6
+    },
+    {
+      "content": "Kahvia",
+      "id": 7
+    }
+  ],
+  "persons": [
+    {
+      "name": "mluukkai",
+      "number": "040-5483923",
+      "id": 1
+    },
+    {
+      "name": "Aku",
+      "number": "123 123",
+      "id": 2
+    },
+    {
+      "name": "Hessu",
+      "number": "432 432",
+      "id": 3
+    },
+    {
+      "name": "Huli",
+      "number": "234",
+      "id": 4
+    },
+    {
+      "name": "Vili",
+      "number": "543",
+      "id": 5
+    },
+    {
+      "name": "Iinex",
+      "number": "534 234",
+      "id": 6
+    }
+  ]
+}
