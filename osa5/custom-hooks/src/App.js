@@ -9,10 +9,15 @@ const useField = (type) => {
     setValue(event.target.value)
   }
 
+  const reset = () => {
+    setValue('')
+  }
+
   return {
     type,
     value,
-    onChange
+    onChange,
+    reset
   }
 }
 
@@ -46,17 +51,20 @@ const App = () => {
   useEffect(() => {
     noteService.getAll()
     personService.getAll()
-  })
+  },[])
 
 
   const handleNoteSubmit = (event) => {
     event.preventDefault()
     noteService.create({ content: content.value })
+    content.reset()
   }
 
   const handlePersonSubmit = (event) => {
     event.preventDefault()
     personService.create({ name: name.value, number: number.value })
+    name.reset()
+    number.reset()
   }
 
   return (

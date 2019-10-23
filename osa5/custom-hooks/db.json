@@ -27,6 +27,14 @@
     {
       "content": "Kahvia",
       "id": 7
+    },
+    {
+      "content": "Suolaa",
+      "id": 8
+    },
+    {
+      "content": "Pippuria",
+      "id": 9
     }
   ],
   "persons": [
