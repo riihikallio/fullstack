@@ -1,5 +1,6 @@
 import React from 'react'
 import blogService from '../services/blogs'
+import { Table } from 'semantic-ui-react'
 
 const Blog = ({ blog, open, setOpen, setList, user }) => {
 
@@ -35,23 +36,22 @@ const Blog = ({ blog, open, setOpen, setList, user }) => {
   let details = ''
   if (blog.id === open) {
     details = <>
-        <div><a href={blog.url}>{blog.url}</a></div>
-        <div>{blog.likes} likes <button onClick={ () => like() }>Like</button></div>
-        <div>added by {blog.user.name}</div>
-        {del}
+      <div><a href={blog.url}>{blog.url}</a></div>
+      <div>{blog.likes} likes <button onClick={() => like()}>Like</button></div>
+      <div>added by {blog.user.name}</div>
+      {del}
     </>
   }
 
   return (
-    <div className="blog" >
-      <div
-        data-testid={blog.id}
-        onClick={() => {(blog.id !== open) ? setOpen(blog.id) : setOpen('') }}
-      >
-        {blog.title} (by {blog.author})
-      </div>
-      {details}
-    </div>
+    <Table.Row
+      className="blog"
+      key={blog.id}
+      data-testid={blog.id}
+      onClick={() => { (blog.id !== open) ? setOpen(blog.id) : setOpen('') }}
+    >
+      <Table.Cell>{blog.title} { details }</Table.Cell><Table.Cell>by {blog.author}</Table.Cell>
+    </Table.Row>
   )
 }
 

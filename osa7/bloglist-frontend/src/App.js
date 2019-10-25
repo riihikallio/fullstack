@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react'
-import Blog from'./components/Blog'
+import Blog from './components/Blog'
 import LoginForm from './components/LoginForm'
 import BlogForm from './components/BlogForm'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import { useField } from './hooks'
+import { Container, Table, Button } from 'semantic-ui-react'
 import './App.css'
 
 function App() {
@@ -19,7 +20,7 @@ function App() {
   const [newUrl, setNewUrl] = useState('')
   const [open, setOpen] = useState('')
 
-  useEffect( () => {
+  useEffect(() => {
     blogService
       .getAll()
       .then(initial => setBlogList(initial))
@@ -54,7 +55,7 @@ function App() {
   const handleLogin = async (event) => {
     event.preventDefault()
     try {
-      console.log(username.value + ' '+ password.value)
+      console.log(username.value + ' ' + password.value)
       const user = await loginService.login({
         username: username.value, password: password.value
       })
@@ -101,7 +102,7 @@ function App() {
   const hideWhenVisible = { display: addVisible ? 'none' : '' }
   const showWhenVisible = { display: addVisible ? '' : 'none' }
   return (
-    <div className="App">
+    <Container className="App">
       <h1>Blogs</h1>
       <Notification message={errorMessage} />
       {user === null ?
@@ -111,37 +112,42 @@ function App() {
           password={password}
         />
         :
-      <>
-        <p>{user.name} logged in <button onClick={() => logout()}>logout</button></p>
-        <div style={hideWhenVisible}>
-          <button onClick={() => setAddVisible(true)}>Add new</button>
-        </div>
-        <div  style={showWhenVisible}>
-          <BlogForm
-            submit={addBlog}
-            title={newTitle}
-            titleChange={({ target }) => setNewTitle(target.value)}
-            author={newAuthor}
-            authorChange={({ target }) => setNewAuthor(target.value)}
-            url={newUrl}
-            urlChange={({ target }) => setNewUrl(target.value)}
-          />
-          <button onClick={() => setAddVisible(false)}>Cancel</button>
-        </div>
-        <h2>List of blogs</h2>
-        {blogList
-          .sort((a,b) => b.likes - a.likes)
-          .map(b => <Blog
-            blog={b}
-            key={b.id}
-            open={open}
-            setOpen={setOpen}
-            setList={setBlogList}
-            user={user}
-          />)}
-      </>
+        <>
+          <p>{user.name} logged in <Button onClick={() => logout()}>logout</Button></p>
+          <div style={hideWhenVisible}>
+            <Button onClick={() => setAddVisible(true)}>Add new</Button>
+          </div>
+          <div style={showWhenVisible}>
+            <BlogForm
+              submit={addBlog}
+              title={newTitle}
+              titleChange={({ target }) => setNewTitle(target.value)}
+              author={newAuthor}
+              authorChange={({ target }) => setNewAuthor(target.value)}
+              url={newUrl}
+              urlChange={({ target }) => setNewUrl(target.value)}
+            />
+            <br />
+            <Button onClick={() => setAddVisible(false)}>cancel</Button>
+          </div>
+          <h2>List of blogs</h2>
+          <Table>
+            <Table.Body>
+              {blogList
+                .sort((a, b) => b.likes - a.likes)
+                .map(b => <Blog
+                  blog={b}
+                  key={b.id}
+                  open={open}
+                  setOpen={setOpen}
+                  setList={setBlogList}
+                  user={user}
+                />)}
+            </Table.Body>
+          </Table>
+        </>
       }
-    </div>
+    </Container>
   )
 }
 
