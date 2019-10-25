@@ -5,7 +5,7 @@ import BlogForm from './components/BlogForm'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import { useField } from './hooks'
-import { Container, Table, Button } from 'semantic-ui-react'
+import { Container, Table, Button, Message } from 'semantic-ui-react'
 import './App.css'
 
 function App() {
@@ -44,9 +44,11 @@ function App() {
 
   const Notification = ({ message }) => {
     if (message) {
-      return <div className="error">
-        {message}
-      </div>
+      return <Container>
+        <Message error>
+          {message}
+        </Message>
+      </Container>
     } else {
       return null
     }
