@@ -1,18 +1,20 @@
 import React, { useState, useEffect } from 'react'
-import Blog from './components/Blog'
+import { connect } from 'react-redux'
 import LoginForm from './components/LoginForm'
 import BlogForm from './components/BlogForm'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import { useField } from './hooks'
-import { Container, Table, Button } from 'semantic-ui-react'
+import { Container, Button } from 'semantic-ui-react'
 import Notification from './components/Notification'
+import { initList, addBlog } from './reducers/blogReducer'
 import { setNotification } from './reducers/notificationReducer'
 import store from './store'
 import './App.css'
+import BlogList from './components/BlogList'
 
 function App(props) {
-  const [blogList, setBlogList] = useState([])
+  //const [blogList, setBlogList] = useState([])
   const [addVisible, setAddVisible] = useState(false)
   const username = useField('text')
   const password = useField('text')
@@ -20,12 +22,10 @@ function App(props) {
   const [newTitle, setNewTitle] = useState('')
   const [newAuthor, setNewAuthor] = useState('')
   const [newUrl, setNewUrl] = useState('')
-  const [open, setOpen] = useState('')
 
   useEffect(() => {
-    blogService
-      .getAll()
-      .then(initial => setBlogList(initial))
+    props.initList()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useEffect(() => {
@@ -65,7 +65,7 @@ function App(props) {
     setUser(null)
   }
 
-  const addBlog = async (event) => {
+  const add = async (event) => {
     event.preventDefault()
     try {
       const newBlog = {
@@ -73,12 +73,11 @@ function App(props) {
         author: newAuthor,
         url: newUrl
       }
-      const created = await blogService.create(newBlog)
-      setBlogList(blogList.concat(created))
+      store.dispatch(addBlog(newBlog))
+      store.dispatch(setNotification(`Added blog ${newTitle} by ${newAuthor}`))
       setNewTitle('')
       setNewAuthor('')
       setNewUrl('')
-      store.dispatch(setNotification(`Added blog ${created.title} by ${created.author}`))
     } catch (exception) {
       store.dispatch(setNotification(exception.errorMessage))
     }
@@ -104,7 +103,7 @@ function App(props) {
           </div>
           <div style={showWhenVisible}>
             <BlogForm
-              submit={addBlog}
+              submit={add}
               title={newTitle}
               titleChange={({ target }) => setNewTitle(target.value)}
               author={newAuthor}
@@ -115,25 +114,13 @@ function App(props) {
             <br />
             <Button onClick={() => setAddVisible(false)}>cancel</Button>
           </div>
-          <h2>List of blogs</h2>
-          <Table>
-            <Table.Body>
-              {blogList
-                .sort((a, b) => b.likes - a.likes)
-                .map(b => <Blog
-                  blog={b}
-                  key={b.id}
-                  open={open}
-                  setOpen={setOpen}
-                  setList={setBlogList}
-                  user={user}
-                />)}
-            </Table.Body>
-          </Table>
+        <BlogList />
         </>
       }
     </Container>
   )
 }
 
-export default App
+export default connect(
+  null, { initList }
+)(App)

@@ -1,9 +1,9 @@
 export const setNotification = (text) => {
-  console.log('Ei kelpaa!!')
+  console.log('Notifikaatio!!', text)
   return dispatch => {
     setTimeout(() => {
       dispatch({ type: 'NOTE', data: null })
-    }, 10000)
+    }, 5000)
     dispatch({
       type: 'NOTE',
       data: text,

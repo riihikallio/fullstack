@@ -1,4 +1,6 @@
 import React from 'react'
+import { connect } from 'react-redux'
+import store from '../store'
 import blogService from '../services/blogs'
 import { Table } from 'semantic-ui-react'
 
@@ -55,4 +57,12 @@ const Blog = ({ blog, open, setOpen, setList, user }) => {
   )
 }
 
-export default Blog
+const mapStateToProps = (state) => {
+  return {
+    blogs: state.blogs,
+  }
+}
+
+const ConnectedBlog = connect(mapStateToProps)(Blog)
+
+export default ConnectedBlog
