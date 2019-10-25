@@ -5,13 +5,15 @@ import BlogForm from './components/BlogForm'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import { useField } from './hooks'
-import { Container, Table, Button, Message } from 'semantic-ui-react'
+import { Container, Table, Button } from 'semantic-ui-react'
+import Notification from './components/Notification'
+import { setNotification } from './reducers/notificationReducer'
+import store from './store'
 import './App.css'
 
-function App() {
+function App(props) {
   const [blogList, setBlogList] = useState([])
   const [addVisible, setAddVisible] = useState(false)
-  const [errorMessage, setErrorMessage] = useState(null)
   const username = useField('text')
   const password = useField('text')
   const [user, setUser] = useState(null)
@@ -35,25 +37,6 @@ function App() {
     }
   }, [])
 
-  const setError = (msg) => {
-    setErrorMessage(msg)
-    setTimeout(() => {
-      setErrorMessage(null)
-    }, 5000)
-  }
-
-  const Notification = ({ message }) => {
-    if (message) {
-      return <Container>
-        <Message error>
-          {message}
-        </Message>
-      </Container>
-    } else {
-      return null
-    }
-  }
-
   const handleLogin = async (event) => {
     event.preventDefault()
     try {
@@ -70,9 +53,9 @@ function App() {
       password.reset()
     } catch (exception) {
       if (exception.message.slice(-3) === '401') {
-        setError('Wrong credentials')
+        store.dispatch(setNotification('Wrong credentials'))
       } else {
-        setError(exception.message)
+        store.dispatch(setNotification(exception.message))
       }
     }
   }
@@ -95,9 +78,9 @@ function App() {
       setNewTitle('')
       setNewAuthor('')
       setNewUrl('')
-      setError(`Added blog ${created.title} by ${created.author}`)
+      store.dispatch(setNotification(`Added blog ${created.title} by ${created.author}`))
     } catch (exception) {
-      setError(exception.errorMessage)
+      store.dispatch(setNotification(exception.errorMessage))
     }
   }
 
@@ -106,7 +89,7 @@ function App() {
   return (
     <Container className="App">
       <h1>Blogs</h1>
-      <Notification message={errorMessage} />
+      <Notification />
       {user === null ?
         <LoginForm
           handleSubmit={handleLogin}
