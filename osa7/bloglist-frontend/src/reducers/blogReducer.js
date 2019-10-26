@@ -1,13 +1,12 @@
 import blogService from '../services/blogs'
-//import store from '../store'
-import setNotification from '../reducers/notificationReducer'
 
 export const like = (blog) => {
   return async dispatch => {
-    const updA = await blogService.vote(blog)
+    const tmp = { ...blog, likes: blog.likes + 1 }
+    const liked = await blogService.update(tmp)
     dispatch({
       type: 'LIKE',
-      data: updA
+      data: liked
     })
   }
 }
@@ -35,7 +34,7 @@ export const initList = () => {
 const bReducer = (state = [], action) => {
   switch (action.type) {
   case 'LIKE':
-    return state.map(a => a.id !== action.data.id ? a : action.data)
+    return state.map(b => b.id !== action.data.id ? b : action.data)
   case 'ADD':
     return [...state, action.data]
   case 'INIT':
