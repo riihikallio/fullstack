@@ -2,23 +2,24 @@ import React from 'react'
 import { connect } from 'react-redux'
 //import Blog from './Blog'
 import { Table } from 'semantic-ui-react'
+import { Link } from 'react-router-dom'
 
 const BlogList = (props) => (
-    <>
-        <h2>List of blogs</h2>
-        <Table>
-          <Table.Body>
-            {props.blogs
-              .sort((a, b) => b.likes - a.likes)
-              .map(b =>
-                <Table.Row key={b.id}>
-                  <Table.Cell>{b.title}</Table.Cell>
-                  <Table.Cell>{b.likes}</Table.Cell>
-                  <Table.Cell>{b.author}</Table.Cell>
-                </Table.Row>)}
-          </Table.Body>
-        </Table>
-    </>
+  <>
+    <h2>List of blogs</h2>
+    <Table>
+      <Table.Body>
+        {props.blogs
+          .sort((a, b) => b.likes - a.likes)
+          .map(b =>
+            <Table.Row key={b.id}>
+              <Table.Cell><Link to={`/blogs/${b.id}`}>{b.title}</Link></Table.Cell>
+              <Table.Cell>{b.likes}</Table.Cell>
+              <Table.Cell>{b.author}</Table.Cell>
+            </Table.Row>)}
+      </Table.Body>
+    </Table>
+  </>
 )
 
 const mapStateToProps = (state) => {

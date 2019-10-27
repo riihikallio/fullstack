@@ -1,19 +1,29 @@
 import React, { useState, useEffect } from 'react'
 import { connect } from 'react-redux'
+import {
+  BrowserRouter as Router,
+  Route, Link, Redirect, withRouter
+} from 'react-router-dom'
+import { Container, Button, Menu } from 'semantic-ui-react'
+import NavLinks from './components/NavLinks'
+import BlogList from './components/BlogList'
+import Blog from './components/Blog'
 import LoginForm from './components/LoginForm'
 import BlogForm from './components/BlogForm'
+import Notification from './components/Notification'
+import UserList from './components/UserList'
+import User from './components/User'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import { useField } from './hooks'
-import { Container, Button } from 'semantic-ui-react'
-import Notification from './components/Notification'
 import { initList, addBlog } from './reducers/blogReducer'
 import { setNotification } from './reducers/notificationReducer'
+import { getUsers } from './reducers/userReducer'
 import store from './store'
 import './App.css'
-import BlogList from './components/BlogList'
 
 function App(props) {
+  console.log(NavLinks())
   //const [blogList, setBlogList] = useState([])
   const [addVisible, setAddVisible] = useState(false)
   const username = useField('text')
@@ -25,6 +35,12 @@ function App(props) {
 
   useEffect(() => {
     props.initList()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  useEffect(() => {
+    console.log('Efekti toimii')
+    props.getUsers()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -87,40 +103,51 @@ function App(props) {
   const showWhenVisible = { display: addVisible ? '' : 'none' }
   return (
     <Container className="App">
-      <h1>Blogs</h1>
-      <Notification />
-      {user === null ?
-        <LoginForm
-          handleSubmit={handleLogin}
-          username={username}
-          password={password}
-        />
-        :
-        <>
-          <p>{user.name} logged in <Button onClick={() => logout()}>logout</Button></p>
-          <div style={hideWhenVisible}>
-            <Button onClick={() => setAddVisible(true)}>Add new</Button>
-          </div>
-          <div style={showWhenVisible}>
-            <BlogForm
-              submit={add}
-              title={newTitle}
-              titleChange={({ target }) => setNewTitle(target.value)}
-              author={newAuthor}
-              authorChange={({ target }) => setNewAuthor(target.value)}
-              url={newUrl}
-              urlChange={({ target }) => setNewUrl(target.value)}
-            />
-            <br />
-            <Button onClick={() => setAddVisible(false)}>cancel</Button>
-          </div>
-        <BlogList />
-        </>
-      }
+      <Router>
+        <NavLinks />
+        <h1>Blogs</h1>
+        <Notification />
+        {user === null ?
+          <LoginForm
+            handleSubmit={handleLogin}
+            username={username}
+            password={password}
+          />
+          :
+          <>
+            <p>{user.name} logged in <Button onClick={() => logout()}>logout</Button></p>
+            <div style={hideWhenVisible}>
+              <Button onClick={() => setAddVisible(true)}>Add new</Button>
+            </div>
+            <div style={showWhenVisible}>
+              <BlogForm
+                submit={add}
+                title={newTitle}
+                titleChange={({ target }) => setNewTitle(target.value)}
+                author={newAuthor}
+                authorChange={({ target }) => setNewAuthor(target.value)}
+                url={newUrl}
+                urlChange={({ target }) => setNewUrl(target.value)}
+              />
+              <br />
+              <Button onClick={() => setAddVisible(false)}>cancel</Button>
+            </div>
+            <Route exact path="/" render={() => <BlogList />} />
+            <Route exact path="/blogs" render={() => <BlogList />} />
+            <Route exact path="/blogs/:id" render={({ match }) =>
+              <Blog blog={match.params.id} user={user} />
+            } />
+            <Route exact path="/users" render={() => <UserList />} />
+            <Route exact path="/users/:id" render={({ match }) =>
+              <User userid={match.params.id} />
+            } />
+          </>
+        }
+      </Router>
     </Container>
   )
 }
 
 export default connect(
-  null, { initList }
+  null, { initList, getUsers }
 )(App)

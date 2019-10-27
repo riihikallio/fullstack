@@ -1,65 +1,54 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import store from '../store'
+import { Link } from 'react-router-dom'
 import blogService from '../services/blogs'
-import { Table } from 'semantic-ui-react'
 
-const Blog = ({ blog, open, setOpen, setList, user }) => {
+const Blog = (props) => {
+  if(!props.blog) return <h2>Loading...</h2>
 
   const refresh = async () => {
     const newList = await blogService.getAll()
-    setList(newList)
+    props.setList(newList)
   }
 
   const like = async () => {
     const updated = {
-      user: blog.user.id,
-      likes: blog.likes + 1,
-      author: blog.author,
-      title: blog.title,
-      url: blog.url
+      user: props.blog.user.id,
+      likes: props.blog.likes + 1,
+      author: props.blog.author,
+      title: props.blog.title,
+      url: props.blog.url
     }
-    await blogService.update(blog.id, updated)
+    await blogService.update(props.blog.id, updated)
     refresh()
   }
 
   const deleteBlog = async () => {
-    if (window.confirm(`Remove ${blog.title} (by ${blog.author})?`)) {
-      await blogService.remove(blog.id)
+    if (window.confirm(`Remove ${props.blog.title} (by ${props.blog.author})?`)) {
+      await blogService.remove(props.blog.id)
       refresh()
     }
   }
 
   let del = ''
-  if (blog.user.username === user.username) {
+  if (props.blog.user && props.blog.user.username === props.user.username) {
     del = <button onClick={() => deleteBlog()}>Delete</button>
   }
 
-  let details = ''
-  if (blog.id === open) {
-    details = <>
-      <div><a href={blog.url}>{blog.url}</a></div>
-      <div>{blog.likes} likes <button onClick={() => like()}>Like</button></div>
-      <div>added by {blog.user.name}</div>
-      {del}
-    </>
-  }
-
   return (
-    <Table.Row
-      className="blog"
-      key={blog.id}
-      data-testid={blog.id}
-      onClick={() => { (blog.id !== open) ? setOpen(blog.id) : setOpen('') }}
-    >
-      <Table.Cell>{blog.title} { details }</Table.Cell><Table.Cell>by {blog.author}</Table.Cell>
-    </Table.Row>
+    <>
+      <h2>{props.blog.title}</h2>
+      <div><a href={props.blog.url}>{props.blog.url}</a></div>
+      <div>by {props.blog.author}</div>
+      <div>{props.blog.likes} likes <button onClick={() => like()}>Like</button></div>
+      <div>added by <Link to={`/users/${props.blog.user.id}`}>{props.blog.user.name}</Link> {del}</div>
+    </>
   )
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = (state, ownProps) => {
   return {
-    blogs: state.blogs,
+    blog: state.blogs ? state.blogs.filter(b => b.id === ownProps.blog)[0] : null,
   }
 }
 
