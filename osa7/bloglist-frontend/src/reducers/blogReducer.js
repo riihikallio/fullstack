@@ -3,7 +3,7 @@ import blogService from '../services/blogs'
 export const likeBlog = (blog) => {
   return async dispatch => {
     const tmp = { ...blog, likes: blog.likes + 1 }
-    const liked = await blogService.update(tmp)
+    const liked = await blogService.update(tmp.id, tmp)
     dispatch({
       type: 'LIKE',
       data: liked
@@ -44,17 +44,13 @@ export const initList = () => {
 const bReducer = (state = [], action) => {
   console.log('bR-state', state)
   console.log('bR-action', action)
-  let tst
   switch (action.type) {
   case 'LIKE':
-    //return state.map(b => b.id !== action.data.id ? b : action.data)
-    return state
+    return state.map(b => b.id !== action.data.id ? b : action.data)
   case 'ADD':
     return [...state, action.data]
   case 'DELETE':
-    tst = state.filter(b => b.id !== action.data)
-    console.log('TST',tst)
-    return tst
+    return state.filter(b => b.id !== action.data)
   case 'INIT':
     return action.data
   default: return state

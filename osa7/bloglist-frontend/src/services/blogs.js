@@ -22,6 +22,7 @@ const create = async newObject => {
 }
 
 const update = (id, newObject) => {
+  console.log('Tallennus', newObject)
   const request = axios.put(`${baseUrl}/${id}`, newObject)
   return request.then(response => response.data)
 }

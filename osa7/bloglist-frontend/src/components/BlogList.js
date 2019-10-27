@@ -1,6 +1,5 @@
 import React from 'react'
 import { connect } from 'react-redux'
-//import Blog from './Blog'
 import { Table } from 'semantic-ui-react'
 import { Link } from 'react-router-dom'
 

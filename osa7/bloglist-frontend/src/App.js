@@ -1,10 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { connect } from 'react-redux'
-import {
-  BrowserRouter as Router,
-  Route, Link, Redirect, withRouter
-} from 'react-router-dom'
-import { Container, Button, Menu } from 'semantic-ui-react'
+import { BrowserRouter as Router, Route } from 'react-router-dom'
+import { Container, Button } from 'semantic-ui-react'
 import NavLinks from './components/NavLinks'
 import BlogList from './components/BlogList'
 import Blog from './components/Blog'
@@ -23,8 +20,6 @@ import store from './store'
 import './App.css'
 
 function App(props) {
-  console.log(NavLinks())
-  //const [blogList, setBlogList] = useState([])
   const [addVisible, setAddVisible] = useState(false)
   const username = useField('text')
   const password = useField('text')
@@ -39,7 +34,6 @@ function App(props) {
   }, [])
 
   useEffect(() => {
-    console.log('Efekti toimii')
     props.getUsers()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
@@ -87,13 +81,20 @@ function App(props) {
       const newBlog = {
         title: newTitle,
         author: newAuthor,
-        url: newUrl
+        url: newUrl,
+        user: {
+          id: user.id,
+          name: user.name
+        }
       }
       store.dispatch(addBlog(newBlog))
       store.dispatch(setNotification(`Added blog ${newTitle} by ${newAuthor}`))
       setNewTitle('')
       setNewAuthor('')
       setNewUrl('')
+      setAddVisible(false)
+      // eslint-disable-next-line no-restricted-globals
+      history.push('/')
     } catch (exception) {
       store.dispatch(setNotification(exception.errorMessage))
     }

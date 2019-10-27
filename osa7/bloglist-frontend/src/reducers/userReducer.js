@@ -3,7 +3,6 @@ import userService from '../services/users'
 export const getUsers = () => {
   return async dispatch => {
     const users = await userService.getAll()
-    console.log('Löytyi:', users)
     dispatch({
       type: 'LIST',
       data: users,
