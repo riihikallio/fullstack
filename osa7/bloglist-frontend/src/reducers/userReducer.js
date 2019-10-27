@@ -11,7 +11,6 @@ export const getUsers = () => {
 }
 
 const uReducer = (state = '', action) => {
-  console.log('uReducer:', action)
   switch (action.type) {
   case 'LIST':
     return action.data

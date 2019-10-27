@@ -50,7 +50,6 @@ function App(props) {
   const handleLogin = async (event) => {
     event.preventDefault()
     try {
-      console.log(username.value + ' ' + password.value)
       const user = await loginService.login({
         username: username.value, password: password.value
       })
@@ -65,7 +64,7 @@ function App(props) {
       if (exception.message.slice(-3) === '401') {
         store.dispatch(setNotification('Wrong credentials'))
       } else {
-        store.dispatch(setNotification(exception.message))
+        store.dispatch(setNotification(exception.message || 'Error in login'))
       }
     }
   }
@@ -93,10 +92,8 @@ function App(props) {
       setNewAuthor('')
       setNewUrl('')
       setAddVisible(false)
-      // eslint-disable-next-line no-restricted-globals
-      history.push('/')
     } catch (exception) {
-      store.dispatch(setNotification(exception.errorMessage))
+      store.dispatch(setNotification(exception.errorMessage || 'Error while saving'))
     }
   }
 

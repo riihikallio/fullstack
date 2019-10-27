@@ -42,8 +42,6 @@ export const initList = () => {
 }
 
 const bReducer = (state = [], action) => {
-  console.log('bR-state', state)
-  console.log('bR-action', action)
   switch (action.type) {
   case 'LIKE':
     return state.map(b => b.id !== action.data.id ? b : action.data)

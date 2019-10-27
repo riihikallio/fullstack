@@ -12,7 +12,6 @@ const Blog = (props) => {
   if(!props.blog) return <h2>Loading...</h2>
 
   const like = () => {
-    console.log('Like:', props.blog)
     store.dispatch(likeBlog(props.blog))
   }
 

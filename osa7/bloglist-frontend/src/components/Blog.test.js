@@ -42,7 +42,7 @@ test('Clicking a blog shows added by', () => {
     user: { username: 'Roope' }
   }
   let open = ''
-  const setOpen = () => { open = blog.id; console.log('Osui') }
+  const setOpen = () => { open = blog.id }
   const setList = () => null
   const user = { username: 'Roope' }
 

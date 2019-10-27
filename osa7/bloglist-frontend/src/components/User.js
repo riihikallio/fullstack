@@ -3,7 +3,6 @@ import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
 
 const User = (props) => {
-  console.log('UserRender', props)
   return (
     <>
       <h2>{props.user ? props.user.name : 'Loading...'}</h2>
@@ -20,8 +19,6 @@ const User = (props) => {
 
 const mapStateToProps = (state, ownProps) => {
   // joskus on hyödyllistä tulostaa mapStateToProps:ista...
-  console.log('User:', state)
-  console.log('OwnProps:', ownProps)
   return {
     user: state.users ? state.users.filter(u => u.id === ownProps.userid)[0] : null,
   }

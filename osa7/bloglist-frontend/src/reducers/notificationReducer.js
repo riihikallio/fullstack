@@ -1,20 +1,23 @@
 export const setNotification = (text) => {
-  console.log('Notifikaatio!!', text)
   return dispatch => {
     setTimeout(() => {
-      dispatch({ type: 'NOTE', data: '' })
-    }, 5000)
+      dispatch({ type: 'CLEAR', data: '' })
+    }, 10000)
     dispatch({
       type: 'NOTE',
-      data: text,
+      data: text ? text : 'Huuhaa'
     })
   }
 }
 
 const nReducer = (state = '', action) => {
+  console.log('nReducer', action)
+  console.log('nState', state)
   switch (action.type) {
   case 'NOTE':
-    return action.data || ''
+    return action.data
+  case 'CLEAR':
+    return ''
   default:
     return state
   }

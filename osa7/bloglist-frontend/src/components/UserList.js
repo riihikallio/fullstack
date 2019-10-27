@@ -1,17 +1,13 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { Table } from 'semantic-ui-react'
-import {
-  BrowserRouter as Router,
-  Route, Link, Redirect, withRouter
-} from 'react-router-dom'
+import { Link } from 'react-router-dom'
 
 const UserList = (props) => {
 
   return (
     <>
       <h2>Users</h2>
-      {console.log('Luodaan listaa', props)}
 
         <Table>
           <Table.Body>
@@ -32,7 +28,6 @@ const UserList = (props) => {
 
 const mapStateToProps = (state) => {
   // joskus on hyödyllistä tulostaa mapStateToProps:ista...
-  console.log('UserList:', state)
   return {
     users: state.users,
   }

@@ -23,7 +23,6 @@ const BlogList = (props) => (
 
 const mapStateToProps = (state) => {
   // joskus on hyödyllistä tulostaa mapStateToProps:ista...
-  console.log('BlogList:', state)
   return {
     blogs: state.blogs,
   }
