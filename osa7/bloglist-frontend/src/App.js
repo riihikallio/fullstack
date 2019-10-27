@@ -102,7 +102,10 @@ function App(props) {
   return (
     <Container className="App">
       <Router>
-        <NavLinks />
+        <NavLinks
+          username={user ? user.name : null}
+          logout={logout}
+        />
         <h1>Blogs</h1>
         <Notification />
         {user === null ?
@@ -113,7 +116,6 @@ function App(props) {
           />
           :
           <>
-            <p>{user.name} logged in <Button onClick={() => logout()}>logout</Button></p>
             <div style={hideWhenVisible}>
               <Button onClick={() => setAddVisible(true)}>Add new</Button>
             </div>
