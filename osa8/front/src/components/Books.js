@@ -12,7 +12,6 @@ const allBooks = gql`
 }
 `
 
-
 const Books = (props) => {
   const books = useQuery(allBooks)
   if (!props.show) {
@@ -24,7 +23,6 @@ const Books = (props) => {
   return (
     <div>
       <h2>books</h2>
-
       <table>
         <tbody>
           <tr>
