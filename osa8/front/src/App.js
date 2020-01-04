@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import Authors from './components/Authors'
 import Books from './components/Books'
+import Recommend from './components/Recommend'
 import NewBook from './components/NewBook'
 import Login from './components/Login'
 
@@ -11,14 +12,16 @@ const App = (props) => {
   return (
     <div>
       <div>
-        <button onClick={() => setPage('authors')}>authors</button>
-        <button onClick={() => setPage('books')}>books</button>
+        &nbsp; <button onClick={() => setPage('authors')}>authors</button>
+        &nbsp; <button onClick={() => setPage('books')}>books</button>
         {token && <span>
-          <button onClick={() => setPage('add')}>add book</button>
-          <button onClick={() => { setToken(null); localStorage.clear(); props.client.resetStore() }}>log out</button>
+          &nbsp; <button onClick={() => setPage('recommend')}>recommended</button>
+          &nbsp; <button onClick={() => setPage('add')}>add book</button>
+          &nbsp;  <button onClick={() => { setToken(null); localStorage.clear(); props.client.resetStore() }}>log out</button>
         </span>}
-        {!token &&
-          <button onClick={() => setPage('login')}>log in</button>
+        {!token && <span>
+          &nbsp; <button onClick={() => setPage('login')}>log in</button>
+        </span>
         }
       </div>
 
@@ -28,6 +31,10 @@ const App = (props) => {
       />
       <Books
         show={page === 'books'}
+      />
+      <Recommend
+        show={page === 'recommend'}
+        token={token}
       />
       <NewBook
         show={page === 'add'}

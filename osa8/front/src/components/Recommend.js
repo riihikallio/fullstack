@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React from 'react'
 import { gql } from 'apollo-boost'
 import { useQuery } from '@apollo/react-hooks'
 
@@ -12,28 +12,36 @@ const allBooks = gql`
   }
 }
 `
+const me = gql`
+{
+  me  {
+    username
+    favoriteGenre
+  }
+}
+`
 const Books = (props) => {
-  const [filter, setFilter] = useState('all')
   const books = useQuery(allBooks)
+  const user = useQuery(me)
+
   if (!props.show) {
     return null
   }
-  if (books.loading) {
+  if (books.loading || user.loading) {
     return <div>loading...</div>
   }
+  if (!user) return null
 
-  let genres = new Set()
-  books.data.allBooks.forEach(b => b.genres.forEach(g => genres.add(g)))
-  genres.add("all")
-
+  let filter = user.data.me.favoriteGenre
   let filtered = books.data.allBooks
-  if (filter !== 'all') {
+  if (filter) {
     filtered = filtered.filter(b => b.genres.includes(filter))
   }
 
   return (
     <div>
-      <h2>books</h2>
+      <h2>recommended for {user.data.me.username}</h2>
+      <p>books in your favorite genre: <b>{user.data.me.favoriteGenre}</b></p>
       <table>
         <tbody>
           <tr>
@@ -54,9 +62,6 @@ const Books = (props) => {
           )}
         </tbody>
       </table>
-      <div>
-        {[...genres].map(g => <span><button key={g} onClick={() => setFilter(g)}>{g}</button>&nbsp;</span> )}
-      </div>
     </div>
   )
 }
