@@ -70,7 +70,7 @@ const typeDefs = gql`
 `
 
 const addBook = async (root, args, context) => {
-  if (!context.user) {
+  if (!context.currentUser) {
     throw new AuthenticationError('Not logged in')
   }
   let author = await Author.findOne({ name: args.author })
@@ -102,7 +102,7 @@ const addBook = async (root, args, context) => {
 // books.forEach(b => addBook(0, b));
 
 const editAuthor = async (root, args, context) => {
-  if (!context.user) {
+  if (!context.currentUser) {
     throw new AuthenticationError('Not logged in')
   }
   let author = await Author.findOne({ name: args.name })
@@ -173,11 +173,13 @@ const server = new ApolloServer({
   resolvers,
   context: async ({ req }) => {
     const auth = req ? req.headers.authorization : null
+    console.log("auth",auth)
     if (auth && auth.toLowerCase().startsWith('bearer ')) {
       const decodedToken = jwt.verify(
         auth.substring(7), JWT_SECRET
       )
       const currentUser = await User.findById(decodedToken.id)
+      console.log("currentUser", currentUser)
       return { currentUser }
     }
   }

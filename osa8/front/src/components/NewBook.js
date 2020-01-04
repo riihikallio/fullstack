@@ -72,21 +72,21 @@ const NewBook = (props) => {
       <h2>add a book</h2>
       <form onSubmit={submit}>
         <div>
-          title
+          title &nbsp;
           <input
             value={title}
             onChange={({ target }) => setTitle(target.value)}
           />
         </div>
         <div>
-          author
+          author &nbsp;
           <input
             value={author}
             onChange={({ target }) => setAuthor(target.value)}
           />
         </div>
         <div>
-          published
+          published &nbsp;
           <input
             type='number'
             value={published}
