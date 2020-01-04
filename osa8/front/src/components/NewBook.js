@@ -11,7 +11,6 @@ mutation addBook($title: String!, $author: String!, $published: Int, $genres: [S
     genres: $genres
   ) {
     title
-    author
     published
   }
 }
@@ -20,7 +19,7 @@ const allBooks = gql`
 {
   allBooks  {
     title,
-    author,
+    author { name },
     published
   }
 }
@@ -53,7 +52,7 @@ const NewBook = (props) => {
   const submit = async (e) => {
     e.preventDefault()
     await addBook({
-      variables: { title, author, published: parseInt(published), genres }
+      variables: { title, author: author, published: parseInt(published), genres }
     })
 
     setTitle('')

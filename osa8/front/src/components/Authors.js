@@ -39,9 +39,10 @@ const Authors = (props) => {
   if (authors.loading) {
     return <div>loading...</div>
   }
-
   const options = []
-  authors.data.allAuthors.forEach(a => options.push({value: a.name, label: a.name}))
+  if (authors.data) {
+    authors.data.allAuthors.forEach(a => options.push({ value: a.name, label: a.name }))
+  }
 
   const submit = async (e) => {
     e.preventDefault()
@@ -77,14 +78,14 @@ const Authors = (props) => {
       </table>
       <h2>set birthyear</h2>
       <form onSubmit={submit}>
-      <div>
+        <div>
           <Select
             value={author}
             onChange={setAuthor}
             options={options}
           />
         </div>
-      <div>
+        <div>
           year
           <input
             value={year}
