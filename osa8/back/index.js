@@ -1,4 +1,4 @@
-const { ApolloServer, UserInputError, AuthenticationError, gql } = require('apollo-server')
+const { ApolloServer, UserInputError, AuthenticationError, gql, PubSub } = require('apollo-server')
 const mongoose = require('mongoose')
 //const uuid = require('uuid/v1')
 require('dotenv').config()
@@ -7,6 +7,8 @@ const JWT_SECRET = 'NEED_HERE_A_SECRET_KEY'
 const Author = require('./models/author')
 const Book = require('./models/book')
 const User = require('./models/user')
+
+const pubsub = new PubSub()
 
 mongoose.set('useFindAndModify', false)
 console.log('connecting to', process.env.MONGODB_URI)
@@ -67,6 +69,9 @@ const typeDefs = gql`
       password: String!
     ): Token
   }
+  type Subscription {
+    bookAdded: Book!
+  }
 `
 
 const addBook = async (root, args, context) => {
@@ -96,6 +101,7 @@ const addBook = async (root, args, context) => {
         invalidArgs: args,
       })
     })
+  pubsub.publish('BOOK_ADDED', { bookAdded: book })
   return book
 }
 
@@ -165,7 +171,12 @@ const resolvers = {
     editAuthor: editAuthor,
     createUser: createUser,
     login: login,
-  }
+  },
+  Subscription: {
+    bookAdded: {
+      subscribe: () => pubsub.asyncIterator(['BOOK_ADDED'])
+    },
+  },
 }
 
 const server = new ApolloServer({
@@ -173,7 +184,7 @@ const server = new ApolloServer({
   resolvers,
   context: async ({ req }) => {
     const auth = req ? req.headers.authorization : null
-    console.log("auth",auth)
+    console.log("auth", auth)
     if (auth && auth.toLowerCase().startsWith('bearer ')) {
       const decodedToken = jwt.verify(
         auth.substring(7), JWT_SECRET
@@ -185,6 +196,7 @@ const server = new ApolloServer({
   }
 })
 
-server.listen().then(({ url }) => {
+server.listen().then(({ url, subscriptionsUrl }) => {
   console.log(`Server ready at ${url}`)
+  console.log(`Subscriptions ready at ${subscriptionsUrl}`)
 })
