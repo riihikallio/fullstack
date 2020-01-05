@@ -1,13 +1,30 @@
 import React, { useState } from 'react'
+import { gql } from 'apollo-boost'
+import { useSubscription } from '@apollo/react-hooks'
 import Authors from './components/Authors'
 import Books from './components/Books'
 import Recommend from './components/Recommend'
 import NewBook from './components/NewBook'
 import Login from './components/Login'
 
+const BOOK_ADDED = gql`
+  subscription {
+    bookAdded {
+      title
+      author {name}
+    }
+  }
+`
+
 const App = (props) => {
   const [page, setPage] = useState('authors')
   const [token, setToken] = useState(null)
+
+  useSubscription(BOOK_ADDED, {
+    onSubscriptionData: ({ subscriptionData }) => {
+      window.alert(`Lisätty ${subscriptionData.data.bookAdded.title}`)
+    }
+  })
 
   return (
     <div>
